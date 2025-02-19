@@ -201,40 +201,48 @@ show_menu() {
 
 # Parse command-line arguments
 case "$1" in
-help)
-    echo -e "${CYAN}Available options:${RESET}"
-    echo "help      - Show this help message"
-    echo "set       - Set DNS using a selected provider"
-    echo "clear --cache   - Clear DNS cache"
-    echo "clear --dns     - Clear previous DNS settings"
-    echo "status    - Show current DNS settings"
-    ;;
-dns)
+dnser)
     case "$2" in
-    set)
-        show_menu
+    help)
+        echo -e "${CYAN}Available options:${RESET}"
+        echo "help      - Show this help message"
+        echo "set       - Set DNS using a selected provider"
+        echo "clear --cache   - Clear DNS cache"
+        echo "clear --dns     - Clear previous DNS settings"
+        echo "status    - Show current DNS settings"
         ;;
-    status)
-        show_dns_status
-        ;;
-    clear)
-        if [ "$3" == "--cache" ]; then
-            clear_dns_cache
-        elif [ "$3" == "--dns" ]; then
-            clear_previous_dns
-        else
-            echo -e "${RED}Invalid option for clear. Use --cache or --dns.${RESET}"
+    dns)
+        case "$3" in
+        set)
+            show_menu
+            ;;
+        status)
+            show_dns_status
+            ;;
+        clear)
+            if [ "$4" == "--cache" ]; then
+                clear_dns_cache
+            elif [ "$4" == "--dns" ]; then
+                clear_previous_dns
+            else
+                echo -e "${RED}Invalid option for clear. Use --cache or --dns.${RESET}"
+                exit 1
+            fi
+            ;;
+        *)
+            echo -e "${RED}Invalid option! Usage: $0 dnser dns [set | status | clear --cache | clear --dns]${RESET}"
             exit 1
-        fi
+            ;;
+        esac
         ;;
     *)
-        echo -e "${RED}Invalid option! Usage: $0 dns [set | status | clear --cache | clear --dns]${RESET}"
+        echo -e "${RED}Invalid option! Usage: $0 dnser [help | dns set | dns status | dns clear --cache | dns clear --dns]${RESET}"
         exit 1
         ;;
     esac
     ;;
 *)
-    echo -e "${RED}Usage: $0 dns [help | set | status | clear --cache | clear --dns]${RESET}"
+    echo -e "${RED}Usage: $0 dnser [help | dns set | dns status | dns clear --cache | dns clear --dns]${RESET}"
     exit 1
     ;;
 esac
