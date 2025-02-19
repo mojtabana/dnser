@@ -7,15 +7,38 @@ YELLOW="\e[33m"
 RED="\e[31m"
 RESET="\e[0m"
 
-# Configurations
-RESOLV_CONF="/etc/resolv.conf"
-BACKUP_FILE="/etc/resolv.conf.backup"
+# ASCII Art
+ART=$(cat <<'EOF'
+      _                      
+     | |                     
+   __| |_ __  ___  ___ _ __  
+  / _` | '_ \/ __|/ _ \ '__| 
+ | (_| | | | \__ \  __/ |    
+  \__,_|_| |_|___/\___|_|    
+                             
+EOF
+)
+# Function to display the ASCII Art before every task
+display_art() {
+    echo -e "${CYAN}$ART${RESET}"
+}
+
+show_welcome() {
+    display_art
+    echo -e "${CYAN}**************************************"
+    echo -e "*                                    *"
+    echo -e "*      ${GREEN}Welcome to the DNS Changer${CYAN}      *"
+    echo -e "*                                    *"
+    echo -e "**************************************"
+    echo -e "${YELLOW}Your DNS will be updated beautifully!${RESET}"
+    echo -e "${CYAN}This tool allows you to change your system's DNS quickly and easily!${RESET}"
+}
 
 # DNS Presets
-SHECAN1="178.22.122.100"
-SHECAN2="185.51.200.2"
 FOUR_OH_THREE1="10.202.10.202"
 FOUR_OH_THREE2="10.202.10.102"
+SHECAN1="178.22.122.100"
+SHECAN2="185.51.200.2"
 GOOGLE1="8.8.8.8"
 GOOGLE2="8.8.4.4"
 CLOUDFLARE1="1.1.1.1"
@@ -27,18 +50,7 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-# Function to display the welcome message
-show_welcome() {
-    echo -e "${CYAN}**************************************"
-    echo -e "*                                    *"
-    echo -e "*      ${GREEN}Welcome to the DNS Changer${CYAN}      *"
-    echo -e "*                                    *"
-    echo -e "**************************************"
-    echo -e "${YELLOW}Your DNS will be updated beautifully!${RESET}"
-    echo -e "${CYAN}This tool allows you to change your system's DNS quickly and easily!${RESET}"
-}
-
-# Function to detect DNS management system
+# Detect DNS management system
 detect_dns_manager() {
     if command -v nmcli &>/dev/null; then
         echo "networkmanager"
@@ -51,123 +63,104 @@ detect_dns_manager() {
     fi
 }
 
-# Function to clear DNS cache
-clear_dns_cache() {
-    if command -v resolvectl &>/dev/null; then
-        echo -e "${YELLOW}Clearing DNS cache using systemd-resolved...${RESET}"
-        resolvectl flush-caches
-        echo -e "${GREEN}DNS cache cleared successfully!${RESET}"
-    else
-        echo -e "${RED}No DNS cache management tool found!${RESET}"
-    fi
-}
-
-# Function to remove previous DNS settings
+# Fully clear previous DNS settings
 clear_previous_dns() {
-    manager=$(detect_dns_manager)
+    display_art
+    echo -e "${YELLOW}Clearing previous DNS settings...${RESET}"
 
-    echo -e "${YELLOW}Detected DNS Manager: ${GREEN}$manager${RESET}"
-
-    case "$manager" in
-    networkmanager)
-        echo -e "${YELLOW}Removing DNS settings in NetworkManager...${RESET}"
+    # 1️⃣ Clear NetworkManager DNS settings
+    if command -v nmcli &>/dev/null; then
         active_connections=$(nmcli -t -f NAME con show --active)
         for connection in $active_connections; do
-            # Remove DNS settings and re-apply network settings
             nmcli connection modify "$connection" ipv4.dns ""
+            nmcli connection modify "$connection" ipv4.ignore-auto-dns no
             nmcli connection up "$connection"
         done
-        echo -e "${GREEN}DNS settings removed successfully in NetworkManager!${RESET}"
-        ;;
+    fi
 
-    systemd-resolved)
-        echo -e "${YELLOW}Removing DNS settings in systemd-resolved...${RESET}"
-        resolvectl dns $(resolvectl status | grep "Link" | awk '{print $2}') --reset
-        echo -e "${GREEN}DNS settings removed successfully in systemd-resolved!${RESET}"
-        ;;
+    # 2️⃣ Remove Global DNS from systemd-resolved
+    if [ -f /etc/systemd/resolved.conf ]; then
+        echo -e "${YELLOW}Removing global DNS from systemd-resolved...${RESET}"
+        sed -i '/^DNS=/d' /etc/systemd/resolved.conf # Remove existing DNS entries
+        sed -i '/^FallbackDNS=/d' /etc/systemd/resolved.conf
+        systemctl restart systemd-resolved # Restart service
+    fi
 
-    resolv.conf)
-        echo -e "${YELLOW}Removing DNS settings in /etc/resolv.conf...${RESET}"
-        >"$RESOLV_CONF"
-        echo -e "${GREEN}DNS settings removed successfully from /etc/resolv.conf!${RESET}"
-        ;;
+    # 3️⃣ Reset per-interface DNS settings
+    if command -v resolvectl &>/dev/null; then
+        for iface in $(resolvectl status | grep "Link" | awk '{print $2}'); do
+            resolvectl dns "$iface" "" # Clear DNS for each interface
+        done
+        resolvectl flush-caches # Flush cache
+    fi
 
-    *)
-        echo -e "${RED}Unknown DNS management system. Please update manually.${RESET}"
-        exit 1
-        ;;
-    esac
+    # 4️⃣ Reset /etc/resolv.conf
+    if [ -L /etc/resolv.conf ]; then
+        rm -f /etc/resolv.conf
+    fi
+    touch /etc/resolv.conf
+    echo "nameserver 127.0.0.53" >/etc/resolv.conf # Use systemd stub resolver
+
+    echo -e "${GREEN}DNS settings cleared successfully!${RESET}"
 }
 
-# Function to change DNS based on detected system
+# Change DNS to new settings
 change_dns() {
-    local dns1="$1"
-    local dns2="$2"
+    primary_dns="$1"
+    secondary_dns="$2"
 
+    echo -e "${YELLOW}Setting new DNS: ${GREEN}$primary_dns, $secondary_dns${RESET}"
+
+    # 1️⃣ Detect DNS Manager
     manager=$(detect_dns_manager)
 
-    echo -e "${YELLOW}Detected DNS Manager: ${GREEN}$manager${RESET}"
-
-    case "$manager" in
-    networkmanager)
-        echo -e "${YELLOW}Updating DNS via NetworkManager...${RESET}"
+    # 2️⃣ Apply DNS for NetworkManager
+    if command -v nmcli &>/dev/null; then
         active_connections=$(nmcli -t -f NAME con show --active)
         for connection in $active_connections; do
-            nmcli connection modify "$connection" ipv4.dns "$dns1 $dns2"
+            nmcli connection modify "$connection" ipv4.dns "$primary_dns $secondary_dns"
+            nmcli connection modify "$connection" ipv4.ignore-auto-dns yes
             nmcli connection up "$connection"
         done
-        echo -e "${GREEN}DNS updated successfully!${RESET}"
-        ;;
+    fi
 
-    systemd-resolved)
-        echo -e "${YELLOW}Updating DNS via systemd-resolved...${RESET}"
-        resolvectl dns $(resolvectl status | grep "Link" | awk '{print $2}') --reset
-        resolvectl dns $(resolvectl status | grep "Link" | awk '{print $2}') "$dns1 $dns2"
-        echo -e "${GREEN}DNS updated successfully!${RESET}"
-        ;;
+    # 3️⃣ Apply Global DNS in systemd-resolved
+    if [ -f /etc/systemd/resolved.conf ]; then
+        echo -e "${YELLOW}Updating /etc/systemd/resolved.conf...${RESET}"
+        sed -i '/^DNS=/d' /etc/systemd/resolved.conf
+        sed -i '/^FallbackDNS=/d' /etc/systemd/resolved.conf
+        echo "DNS=$primary_dns $secondary_dns" >>/etc/systemd/resolved.conf
+        systemctl restart systemd-resolved
+    fi
 
-    resolv.conf)
-        echo -e "${YELLOW}Updating /etc/resolv.conf...${RESET}"
-        cp "$RESOLV_CONF" "$BACKUP_FILE"
-        >"$RESOLV_CONF"
-        echo -e "nameserver $dns1\nnameserver $dns2" >"$RESOLV_CONF"
-        chattr +i "$RESOLV_CONF"
-        echo -e "${GREEN}DNS updated successfully!${RESET}"
-        ;;
-
-    *)
-        echo -e "${RED}Unknown DNS management system. Please update manually.${RESET}"
-        exit 1
-        ;;
-    esac
-}
-
-# Function to show DNS status
-show_dns_status() {
-    manager=$(detect_dns_manager)
-    echo -e "${CYAN}Current DNS Settings:${RESET}"
-
-    case "$manager" in
-    networkmanager)
-        active_connections=$(nmcli -t -f NAME con show --active)
-        for connection in $active_connections; do
-            nmcli connection show "$connection" | grep "ipv4.dns"
+    # 4️⃣ Apply DNS per interface in systemd-resolved
+    if command -v resolvectl &>/dev/null; then
+        for iface in $(resolvectl status | grep "Link" | awk '{print $2}'); do
+            resolvectl dns "$iface" "$primary_dns" "$secondary_dns"
         done
-        ;;
-    systemd-resolved)
-        resolvectl status | grep "DNS Servers"
-        ;;
-    resolv.conf)
-        cat "$RESOLV_CONF"
-        ;;
-    *)
-        echo -e "${RED}Unknown DNS management system. Unable to fetch DNS status.${RESET}"
-        ;;
-    esac
+        resolvectl flush-caches
+    fi
+
+    # 5️⃣ Update /etc/resolv.conf
+    if [ -L /etc/resolv.conf ]; then
+        rm -f /etc/resolv.conf
+    fi
+    echo -e "nameserver $primary_dns\nnameserver $secondary_dns" >/etc/resolv.conf
+
+    echo -e "${GREEN}DNS changed successfully to $primary_dns, $secondary_dns!${RESET}"
 }
 
-# Function to show selection menu
+# Show current DNS settings
+show_dns_status() {
+    display_art
+    echo -e "${CYAN}Current DNS Settings:${RESET}"
+    resolvectl status | grep -E "DNS Servers|Link"
+    cat /etc/resolv.conf
+}
+
+# CLI menu for setting DNS
 show_menu() {
+    display_art
     echo -e "${CYAN}Select a DNS provider:${RESET}"
     echo "1) Shecan (🇮🇷 178.22.122.100, 185.51.200.2)"
     echo "2) 403 (🇮🇷 10.202.10.202, 10.202.10.102)"
@@ -180,7 +173,7 @@ show_menu() {
 
     case "$choice" in
     1) change_dns "$SHECAN1" "$SHECAN2" ;;
-    2) change_dns "$FOUR_OH_THREE1" "$FOUR_OH_THREE2" ;;
+    2) change_dns "$FOUR_OH_THREE1" "$FOUR_OH_THREE2" ;; # Added 403 DNS
     3) change_dns "$GOOGLE1" "$GOOGLE2" ;;
     4) change_dns "$CLOUDFLARE1" "$CLOUDFLARE2" ;;
     5)
@@ -199,9 +192,10 @@ show_menu() {
     esac
 }
 
-# Parse command-line arguments
+# Command-line arguments
 case "$1" in
 help)
+    display_art
     echo -e "${CYAN}Available options:${RESET}"
     echo "help      - Show this help message"
     echo "set       - Set DNS using a selected provider"
@@ -219,7 +213,8 @@ dns)
         ;;
     clear)
         if [ "$3" == "--cache" ]; then
-            clear_dns_cache
+            resolvectl flush-caches
+            echo -e "${GREEN}DNS cache cleared!${RESET}"
         elif [ "$3" == "--dns" ]; then
             clear_previous_dns
         else
@@ -228,7 +223,7 @@ dns)
         fi
         ;;
     *)
-        echo -e "${RED}Invalid option! Usage: $0 dns [set | status | clear --cache | clear --dns]${RESET}"
+        echo -e "${RED}Invalid option!${RESET}"
         exit 1
         ;;
     esac
