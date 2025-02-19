@@ -142,6 +142,30 @@ change_dns() {
     esac
 }
 
+# Function to show DNS status
+show_dns_status() {
+    manager=$(detect_dns_manager)
+    echo -e "${CYAN}Current DNS Settings:${RESET}"
+
+    case "$manager" in
+    networkmanager)
+        active_connections=$(nmcli -t -f NAME con show --active)
+        for connection in $active_connections; do
+            nmcli connection show "$connection" | grep "ipv4.dns"
+        done
+        ;;
+    systemd-resolved)
+        resolvectl status | grep "DNS Servers"
+        ;;
+    resolv.conf)
+        cat "$RESOLV_CONF"
+        ;;
+    *)
+        echo -e "${RED}Unknown DNS management system. Unable to fetch DNS status.${RESET}"
+        ;;
+    esac
+}
+
 # Function to show selection menu
 show_menu() {
     echo -e "${CYAN}Select a DNS provider:${RESET}"
@@ -175,34 +199,50 @@ show_menu() {
     esac
 }
 
-# Display the welcome message and then check arguments
-show_welcome
-
 # Parse command-line arguments
 case "$1" in
-dns)
+dnser)
     case "$2" in
-    --status)
-        echo -e "${CYAN}Current DNS Settings:${RESET}"
-        cat "$RESOLV_CONF"
+    help)
+        echo -e "${CYAN}Available options:${RESET}"
+        echo "help      - Show this help message"
+        echo "set       - Set DNS using a selected provider"
+        echo "clear --cache   - Clear DNS cache"
+        echo "clear --dns     - Clear previous DNS settings"
+        echo "status    - Show current DNS settings"
         ;;
-    --set)
-        show_menu
-        ;;
-    --clear-cache)
-        clear_dns_cache
-        ;;
-    --clear-dns)
-        clear_previous_dns
+    dns)
+        case "$3" in
+        set)
+            show_menu
+            ;;
+        status)
+            show_dns_status
+            ;;
+        clear)
+            if [ "$4" == "--cache" ]; then
+                clear_dns_cache
+            elif [ "$4" == "--dns" ]; then
+                clear_previous_dns
+            else
+                echo -e "${RED}Invalid option for clear. Use --cache or --dns.${RESET}"
+                exit 1
+            fi
+            ;;
+        *)
+            echo -e "${RED}Invalid option! Usage: $0 dnser dns [set | status | clear --cache | clear --dns]${RESET}"
+            exit 1
+            ;;
+        esac
         ;;
     *)
-        echo -e "${RED}Invalid option! Usage: $0 dns [--status | --set | --clear-cache | --clear-dns]${RESET}"
+        echo -e "${RED}Invalid option! Usage: $0 dnser [help | dns set | dns status | dns clear --cache | dns clear --dns]${RESET}"
         exit 1
         ;;
     esac
     ;;
 *)
-    echo -e "${RED}Usage: $0 dns [--status | --set | --clear-cache | --clear-dns]${RESET}"
+    echo -e "${RED}Usage: $0 dnser [help | dns set | dns status | dns clear --cache | dns clear --dns]${RESET}"
     exit 1
     ;;
 esac
