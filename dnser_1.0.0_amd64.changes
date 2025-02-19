@@ -1,0 +1,50 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Format: 1.8
+Date: Thu, 19 Feb 2025 12:00:00 +0000
+Source: dnser
+Binary: dnser
+Built-For-Profiles: noudeb
+Architecture: source amd64
+Version: 1.0.0
+Distribution: unstable
+Urgency: low
+Maintainer: mojtabana <fotrosna@gmail.com>
+Changed-By: mojtaba <fotrosna@gmail.com>
+Description:
+ dnser      - A script to change DNS settings easily
+Changes:
+ dnser (1.0.0) unstable; urgency=low
+ .
+   * Initial release of dnser script to change DNS settings.
+Checksums-Sha1:
+ 1b8728687c31bc27ef1c43884714f6ede85bc55b 1221 dnser_1.0.0.dsc
+ 7cb3fad66dc0f17582af9e7ad8632c3cf1f9b33d 10322 dnser_1.0.0.tar.gz
+ ec8f07763f5f1a3d7a8265a5bba74ce9ff6ad245 6928 dnser_1.0.0_amd64.buildinfo
+ 5f506d84cf8ca0d7290e4771587f3030bfdca96a 914 dnser_1.0.0_amd64.deb
+Checksums-Sha256:
+ 66b1d0d6995822866de979dd04f1dd05c80cb9653eb868aabb1f7c23d6c6ad82 1221 dnser_1.0.0.dsc
+ 6ab2f48264330cb45db46542d1f6701dc98b245fa73f4b380e4f36bda569cebc 10322 dnser_1.0.0.tar.gz
+ 4856d52a450b812f10faba39d550da6bbe441c0b523c1706022c9cc0e3cace97 6928 dnser_1.0.0_amd64.buildinfo
+ 8f254ba8bf7c0350f36386e23044841903869d2397ac545949030ac165802b54 914 dnser_1.0.0_amd64.deb
+Files:
+ 35ffd25376cc2e394c7a7dc441f075b4 1221 utils optional dnser_1.0.0.dsc
+ 33cd2f1fc7576c04b50788836c7c3ddc 10322 utils optional dnser_1.0.0.tar.gz
+ 65335ff662193909b7ca58f3f82808e8 6928 utils optional dnser_1.0.0_amd64.buildinfo
+ 8699100c63d1e338c58b211ab0800050 914 utils optional dnser_1.0.0_amd64.deb
+
+-----BEGIN PGP SIGNATURE-----
+
+iQHHBAEBCgAxFiEEMg64EUMgUhRzj5V2SGRVmJ4xYXkFAme1xmITHGZvdHJvc25h
+QGdtYWlsLmNvbQAKCRBIZFWYnjFhec1gDADSjekVKtLTZLELo54/7/vupl3FhCLJ
+udwqEJetr4hKLG4fN89XmTNfm6oEqHQHhW+0qq6+7cmdPZ7TpLLcpSq7ezmLkSfE
+ctfZA2AWMKQLaAQ5EMdRYB9DzADliymgwHuuKLb8ip/lvaoU4OK5uDXgkj5nEhOX
+S360+YbaTBYc7wac4JnddhpDuic4s4AMwS0qT2fZOSGLoq/uhVxL/1V4DhtJDi4Z
+jtec9A5dt+7ZwMpDdXdSnOiKFFOon7Q7QAVg1KJIwZ4DqKNPqqjQAnBIRGMJjBVa
+wHn9qJ2Rf66ZK+R08Q9UzKRIdO4jeAftvNFDPWpSy80Ce+Pj0TKX1/ysj8NIQa4H
+KPsjOLPCHrh2Od99jYLuCkilY1siksWDFGSQMfELk+905PlWvWzXsiL2FvKM8RG/
+B1clwsei4i59JwH/M2x9VXxmTsBJzdXzfgosqi/DDLo5pqPDYkUv5Gu9UEvxN7X4
+KNdj2HoWYFl7yjFuWfYrpDshGnS3VFRrkOk=
+=wji/
+-----END PGP SIGNATURE-----

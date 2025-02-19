@@ -1,0 +1,13 @@
+Source: dnser
+Section: utils
+Priority: optional
+Maintainer: mojtabana <fotrosna@gmail.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.5
+X-Ubuntu-Use-Latest-Release: yes
+
+Package: dnser
+Architecture: amd64
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: A script to change DNS settings easily
+ This package provides the `dnser` script to help users easily change their DNS settings.
