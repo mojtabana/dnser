@@ -1,11 +1,8 @@
 Package: dnser
-Version: 1.0.0
-Section: base
-Priority: optional
+Version: 1.1.0
 Architecture: amd64
-Depends: bash
-Maintainer: mojtabana [fotrosna@gmail.com]
-Description: A DNS management tool for setting and clearing DNS
- This tool allows you to change and manage DNS settings on your Linux machine.
- It supports setting DNS for NetworkManager, systemd-resolved, and directly editing resolv.conf.
- 
+Maintainer: mojtabana <fotrosna@gmail.com>
+Description: DNS configuration script for Linux
+Depends: bash, network-manager, systemd
+Priority: optional
+Section: utils
