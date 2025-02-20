@@ -12,3 +12,12 @@ To add this APT repository to your system, run the following command:
 
 ```bash
 echo "deb [trusted=yes] https://mojtabana.github.io/dnser stable main" | sudo tee /etc/apt/sources.list.d/dnser.list
+```
+
+### 2. Update the Package List
+
+After adding the repository, run the following command to update your package list:
+
+```bash
+sudo apt update
+```
