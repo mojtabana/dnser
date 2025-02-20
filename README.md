@@ -21,3 +21,17 @@ After adding the repository, run the following command to update your package li
 ```bash
 sudo apt update
 ```
+### 2. Update the Package List
+
+After adding the repository, run the following command to update your package list:
+
+```bash
+sudo apt update
+```
+### 3. Install the `dnser` Package
+
+Once your system is updated, you can install the `dnser` package with the following command:
+
+```bash
+sudo apt install dnser
+```
