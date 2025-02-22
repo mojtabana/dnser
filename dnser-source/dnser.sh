@@ -35,6 +35,16 @@ show_welcome() {
 }
 
 # DNS Presets
+BOGHZAR1="185.55.226.26"
+BOGHZAR2="185.55.225.25"
+ELECTRO1="78.157.42.101"
+ELECTRO2="78.157.42.100"
+HOSTIRAN1="172.29.0.100"
+HOSTIRAN2="172.29.2.100"
+SHATEL1="85.15.1.14"
+SHATEL2="85.15.1.15"
+RADAR1="10.202.10.10"
+RADAR2="10.202.10.11"
 FOUR_OH_THREE1="10.202.10.202"
 FOUR_OH_THREE2="10.202.10.102"
 SHECAN1="178.22.122.100"
@@ -166,8 +176,13 @@ show_menu() {
     echo "2) 403 (🇮🇷 10.202.10.202, 10.202.10.102)"
     echo "3) Google (🌍 8.8.8.8, 8.8.4.4)"
     echo "4) Cloudflare (🌍 1.1.1.1, 1.0.0.1)"
-    echo "5) Enter custom DNS"
-    echo "6) Exit"
+    echo "5) Boghzar (🌍 185.55.226.26, 185.55.225.25)"
+    echo "6) Electro (🌍 78.157.42.101, 78.157.42.100)"
+    echo "7) HostIran (🌍 172.29.0.100, 172.29.2.100)"
+    echo "8) Shatel (🌍 85.15.1.14, 85.15.1.15)"
+    echo "9) Radar (🌍 10.202.10.10, 10.202.10.11)"
+    echo "10) Enter custom DNS"
+    echo "11) Exit"
 
     read -p "Enter your choice [1-6]: " choice
 
@@ -176,12 +191,17 @@ show_menu() {
     2) change_dns "$FOUR_OH_THREE1" "$FOUR_OH_THREE2" ;; # Added 403 DNS
     3) change_dns "$GOOGLE1" "$GOOGLE2" ;;
     4) change_dns "$CLOUDFLARE1" "$CLOUDFLARE2" ;;
-    5)
+    5) change_dns "$BOGHZAR1" "$BOGHZAR2" ;;
+    6) change_dns "$ELECTRO1" "$ELECTRO2" ;;
+    7) change_dns "$HOSTIRAN1" "$HOSTIRAN2" ;;
+    8) change_dns "$SHATEL1" "$SHATEL2" ;;
+    9) change_dns "$RADAR1" "$RADAR2" ;;
+    10)
         read -p "Enter primary DNS: " custom_dns1
         read -p "Enter secondary DNS: " custom_dns2
         change_dns "$custom_dns1" "$custom_dns2"
         ;;
-    6)
+    11)
         echo -e "${RED}Exiting...${RESET}"
         exit 0
         ;;
