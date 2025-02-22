@@ -16,4 +16,4 @@ To download and install the latest release, run:
 
 ```bash
 sudo wget -O /usr/local/bin/dnser https://github.com/mojtabana/dnser/releases/latest/download/dnser.sh
-chmod +x /usr/local/bin/dnser
+sudo chmod +x /usr/local/bin/dnser
