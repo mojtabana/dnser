@@ -27,16 +27,16 @@ sudo chmod +x /usr/local/bin/dnser
 sudo dnser dns status
 ```
 
-### 1️⃣ **clear all DNS settings**    
+### 2️⃣ **clear all DNS settings**    
 ```bash
 sudo dnser dns clear --dns
 ```
-### 1️⃣ **clear DNS caches**    
+### 3️⃣ **clear DNS caches**    
 ```bash
 sudo dnser dns clear --cache
 ```
 
-### 1️⃣ **set DNS**    
+### 4️⃣ **set DNS**    
 ```bash
 sudo dnser dns set
 ```
