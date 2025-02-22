@@ -1,30 +1,19 @@
-# dnser APT Repository
+# DNS Changer - Easily Change Your System's DNS  
 
-Welcome to the **dnser APT repository**! This repository provides prebuilt `.deb` packages of the `dnser` package for easy installation via APT, as well as the source code for building from source.
+This script allows you to **quickly change your system's DNS** settings using various DNS providers. It supports **NetworkManager, systemd-resolved, and resolv.conf** methods.  
 
-## Quick Start
+## 🚀 Features  
+✅ Change DNS to well-known providers (Google, Cloudflare, Shecan, etc.)  
+✅ Automatically detects your system's DNS management method  
+✅ Clears and resets DNS settings for a fresh configuration  
+✅ Works on **Ubuntu, Debian, Arch, and most Linux distros**  
 
-To get started with the `dnser` package, follow these simple steps to add the APT repository and install the package.
+---
 
-### 1. Add the Repository to Your System
+## 📥 Installation  
 
-To add this APT repository to your system, run the following command:
-
-```bash
-echo "deb [trusted=yes] https://mojtabana.github.io/dnser stable main" | sudo tee /etc/apt/sources.list.d/dnser.list
-```
-
-### 2. Update the Package List
-
-After adding the repository, run the following command to update your package list:
+To download and install the latest release, run:  
 
 ```bash
-sudo apt update
-```
-### 3. Install the `dnser` Package
-
-Once your system is updated, you can install the `dnser` package with the following command:
-
-```bash
-sudo apt install dnser
-```
+sudo wget -O /usr/local/bin/dnser https://github.com/mojtabana/dnser/releases/latest/download/dnser.sh
+chmod +x /usr/local/bin/dnser
