@@ -184,7 +184,7 @@ show_menu() {
     echo "10) Enter custom DNS"
     echo "11) Exit"
 
-    read -p "Enter your choice [1-6]: " choice
+    read -p "Enter your choice [1-11]: " choice
 
     case "$choice" in
     1) change_dns "$SHECAN1" "$SHECAN2" ;;
