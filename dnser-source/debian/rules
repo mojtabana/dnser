@@ -1,7 +1,0 @@
-#!/usr/bin/make -f
-
-# Specify the package version and other metadata
-# Any build targets not defined here will fall back to dh commands automatically
-
-%:
-	dh $@

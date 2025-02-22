@@ -1,8 +1,0 @@
-Package: dnser
-Version: 1.1.0
-Architecture: amd64
-Maintainer: mojtabana <fotrosna@gmail.com>
-Description: DNS configuration script for Linux
-Depends: bash, network-manager, systemd
-Priority: optional
-Section: utils

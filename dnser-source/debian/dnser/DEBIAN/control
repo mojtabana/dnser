@@ -1,9 +1,0 @@
-Package: dnser
-Version: 1.0.0
-Architecture: amd64
-Maintainer: mojtabana <fotrosna@gmail.com>
-Installed-Size: 7
-Section: utils
-Priority: optional
-Description: A script to change DNS settings easily
- This package provides the `dnser` script to help users easily change their DNS settings.
