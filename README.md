@@ -1,6 +1,6 @@
 # DNS Changer - Easily Change Your System's DNS  
 
-This script allows you to **quickly change your system's DNS** settings using various DNS providers. It supports **NetworkManager, systemd-resolved, and resolv.conf** methods.  
+`dnser` allows you to **quickly change your system's DNS** settings using various DNS providers. It supports **NetworkManager, systemd-resolved, and resolv.conf** methods.  
 
 ## 🚀 Features  
 ✅ Change DNS to well-known providers (Google, Cloudflare, Shecan, etc.)  
@@ -17,3 +17,16 @@ To download and install the latest release, run:
 ```bash
 sudo wget -O /usr/local/bin/dnser https://github.com/mojtabana/dnser/releases/latest/download/dnser.sh
 sudo chmod +x /usr/local/bin/dnser
+```
+
+
+## 📥 usage  
+
+-1: status:
+```bash
+sudo dnser dns status
+``` 
+-2: clear cache:
+```bash
+sudo dnser dns clear --cache
+``` 
