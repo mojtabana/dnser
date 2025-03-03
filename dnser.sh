@@ -35,6 +35,8 @@ show_welcome() {
 }
 
 # DNS Presets
+SHECAN_PRO1="178.22.122.101"
+SHECAN_PRO2="185.51.200.1"
 BOGHZAR1="185.55.226.26"
 BOGHZAR2="185.55.225.25"
 ELECTRO1="78.157.42.101"
@@ -172,6 +174,7 @@ show_dns_status() {
 show_menu() {
     display_art
     echo -e "${CYAN}Select a DNS provider:${RESET}"
+    echo "0) Shecan pro (🇮🇷 178.22.122.101, 185.51.200.1)"
     echo "1) Shecan (🇮🇷 178.22.122.100, 185.51.200.2)"
     echo "2) 403 (🇮🇷 10.202.10.202, 10.202.10.102)"
     echo "3) Google (🌍 8.8.8.8, 8.8.4.4)"
@@ -187,6 +190,7 @@ show_menu() {
     read -p "Enter your choice [1-11]: " choice
 
     case "$choice" in
+    0) change_dns "$SHECAN_PRO1" "$SHECAN_PRO2" ;;
     1) change_dns "$SHECAN1" "$SHECAN2" ;;
     2) change_dns "$FOUR_OH_THREE1" "$FOUR_OH_THREE2" ;; # Added 403 DNS
     3) change_dns "$GOOGLE1" "$GOOGLE2" ;;
